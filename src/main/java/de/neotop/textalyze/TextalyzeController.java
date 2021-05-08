@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,13 +25,15 @@ public class TextalyzeController {
 
     private static Logger logger = LoggerFactory.getLogger(TextalyzeController.class);
 
+    @Autowired
+    private ITextalyzeCache cache;
+
     @PostMapping("")
     public TextalyzeRecord doAnalyzeText() throws IOException {
 
-        //TODO analyze
-
         TextalyzeRecord metadata = new TextalyzeRecord(generateId());
-        // TODO cache
+        //TODO analyze
+        cache.put(metadata);
 
         return metadata;
     }
@@ -40,9 +43,7 @@ public class TextalyzeController {
             @PathVariable(name="id") String id
             ) throws IOException {
 
-        // TODO get from cache
-
-        return new TextalyzeRecord("todo");
+        return cache.lookup(id);
     }
 
     @GetMapping("/{id}/{word}/frequency")

@@ -1,5 +1,6 @@
 package de.neotop.textalyze;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,7 +28,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  * @author a.kohlbecker
  */
-public class TextalyzeRecord {
+public class TextalyzeRecord implements Serializable {
+
+    private static final long serialVersionUID = 4757891973778716697L;
 
     private String id;
     private long wordCount;
