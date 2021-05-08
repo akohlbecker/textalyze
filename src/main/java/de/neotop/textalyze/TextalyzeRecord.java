@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Holds all information on the analyzed text.
- * Prior analysis, the text is cleaned from punctuation characters
- * and is normalized.
+
  * <p>In future versions, stop words like "a" or "the" are removed.
  *
  * <h3>Basic information:</h3>
@@ -57,8 +56,14 @@ public class TextalyzeRecord {
         this.distances = distances;
     }
 
+    /**
+     * Word
+     * Prior analysis, the text is cleaned from punctuation characters
+     * and is normalized, hence, the word count may be lower than in the original text.
+     * @return
+     */
     @JsonIgnore // hidden from the REST service response
-    public List<String> getWordFrequencies() {
+    public List<String> getWordCout() {
         return wordFrequencies;
     }
 
