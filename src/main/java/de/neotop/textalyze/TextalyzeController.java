@@ -2,6 +2,7 @@ package de.neotop.textalyze;
 
 import java.io.IOException;
 
+import org.ehcache.spi.loaderwriter.CacheLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,21 +51,19 @@ public class TextalyzeController {
     }
 
     @GetMapping("/{id}/{word}/frequency")
-    public Long doWordFrequency(
+    public Integer doWordFrequency(
             @PathVariable(name="id") String id,
             @PathVariable(name="word") String word
-            ) throws IOException {
+            ) throws IOException, CacheLoadingException, WordNotFoundException {
 
-        // TODO get from cache
-
-        return 0l;
+        return cache.lookup(id).getWordFrequency(word);
     }
 
     @GetMapping(name="/{id}/{word}/similar")
     public Long doSimilarWords(
             @PathVariable(name="id") String id,
             @PathVariable(name="word") String word,
-            @RequestParam(name="threshold", defaultValue = "0.5") double threshold
+            @RequestParam(name="threshold", defaultValue = "2.5") double threshold
             ) throws IOException {
 
         // TODO find similar words

@@ -33,6 +33,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link #wordFrequencies}</li>
  * </ul>
  *
+ * TODO separate business logic from data container
+ *
  * @author a.kohlbecker
  */
 public class TextalyzeRecord implements Serializable {
@@ -51,6 +53,10 @@ public class TextalyzeRecord implements Serializable {
 
     public TextalyzeRecord(String id) {
         this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     /**
@@ -130,6 +136,11 @@ public class TextalyzeRecord implements Serializable {
         return Collections.unmodifiableList(distinctWords);
     }
 
+    /**
+     * Provides the levenshtein distance for two given words from the internal matrix.
+     *
+     * @throws WordNotFoundException
+     */
     public double getLevenshteinDistance(String a, String b) throws WordNotFoundException {
         int indexA = distinctWords.indexOf(TextAnalyzer.normalizeText(a));
         int indexB = distinctWords.indexOf(TextAnalyzer.normalizeText(b));
@@ -142,8 +153,6 @@ public class TextalyzeRecord implements Serializable {
         return distances[indexA][indexB];
     }
 
-    public String getId() {
-        return id;
-    }
+
 
 }

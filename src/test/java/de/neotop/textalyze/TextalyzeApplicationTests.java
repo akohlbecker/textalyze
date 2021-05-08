@@ -103,4 +103,11 @@ class TextalyzeApplicationTests {
             });
     }
 
+    @Test
+    public void workflow() throws Exception {
+        String id = controller.doAnalyzeText(punctationText).getId();
+        assertEquals(2, controller.doWordFrequency(id, "Wörd"));
+    }
+
+
 }
