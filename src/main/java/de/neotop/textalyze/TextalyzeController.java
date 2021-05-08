@@ -1,6 +1,7 @@
 package de.neotop.textalyze;
 
 import java.io.IOException;
+import java.io.StringReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +32,13 @@ public class TextalyzeController {
 
     @PostMapping("")
     public TextalyzeRecord doAnalyzeText(
-            @RequestBody String text
+            @RequestBody(required = true) String text
             ) throws IOException {
 
-        TextalyzeRecord metadata = new TextalyzeRecord(generateId());
-        //TODO analyze
-        cache.put(metadata);
-
-        return metadata;
+        TextalyzeRecord record = new TextalyzeRecord(generateId());
+        TextAnalyzer analyzer = new TextAnalyzer(record, new StringReader(text));
+        cache.put(analyzer.getRecord());
+        return analyzer.getRecord();
     }
 
     @GetMapping("/{id}")

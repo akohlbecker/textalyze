@@ -17,6 +17,7 @@
   <description>Simple text analyis REST service</description>
   <properties>
     <java.version>11</java.version>
+    <lucene.version>5.5.5</lucene.version>
   </properties>
   <dependencies>
     <dependency>
@@ -43,6 +44,16 @@
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <version>3.8.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>${lucene.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+      <version>${lucene.version}</version>
     </dependency>
   </dependencies>
 

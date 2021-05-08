@@ -1,7 +1,8 @@
 package de.neotop.textalyze;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,15 +34,18 @@ public class TextalyzeRecord implements Serializable {
     private static final long serialVersionUID = 4757891973778716697L;
 
     private String id;
-    private long wordCount;
+    private long wordCount = 0;
 
     private double[][] distances;
-    private List<String> wordFrequencies;
+    private Map<String, Integer> wordFrequencies = new HashMap<>();
 
     public TextalyzeRecord(String id) {
         this.id = id;
     }
 
+    /**
+     * Total number of words analyzed.
+     */
     public long getWordCount() {
         return wordCount;
     }
@@ -60,18 +64,14 @@ public class TextalyzeRecord implements Serializable {
     }
 
     /**
-     * Word
-     * Prior analysis, the text is cleaned from punctuation characters
-     * and is normalized, hence, the word count may be lower than in the original text.
-     * @return
+     * Word Frequencies, that is the number of occurrences of each word in the analyzed text.
+     * Prior analysis, the text is usually cleaned from punctuation characters
+     * and is normalized (see {@link TextAnalyzer}), hence, the word count may be lower
+     * than in the original text.
      */
     @JsonIgnore // hidden from the REST service response
-    public List<String> getWordCout() {
+    public Map<String, Integer> getWordFrequencies() {
         return wordFrequencies;
-    }
-
-    public void setWordFrequencies(List<String> wordFrequencies) {
-        this.wordFrequencies = wordFrequencies;
     }
 
     public String getId() {

@@ -38,7 +38,7 @@ java -jar target/textalyze-0.0.1-SNAPSHOT.war
 Post a test to run the analysis. The REST service responds with core information on the new created resource, including its **id**
 
 ~~~
-http POST  :8080/textalyze  
+ http POST :8080/textalyze body="Word Word word"  
 ~~~
 
 using the **id** from the above response the resource can be requested again. 
