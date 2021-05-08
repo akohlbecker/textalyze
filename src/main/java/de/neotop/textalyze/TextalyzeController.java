@@ -1,7 +1,6 @@
 package de.neotop.textalyze;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,8 @@ public class TextalyzeController {
             ) throws IOException {
 
         TextalyzeRecord record = new TextalyzeRecord(generateId());
-        TextAnalyzer analyzer = new TextAnalyzer(record, new StringReader(text));
+        TextAnalyzer analyzer = new TextAnalyzer(record, text);
+        analyzer.calculateLevenstheinDistance();
         cache.put(analyzer.getRecord());
         return analyzer.getRecord();
     }
@@ -75,6 +75,14 @@ public class TextalyzeController {
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleNoSuchElementFoundException(IOException exception) {
+      return ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(WordNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleNoSuchElementFoundException(WordNotFoundException exception) {
       return ResponseEntity
           .status(HttpStatus.NOT_FOUND)
           .body(exception.getMessage());

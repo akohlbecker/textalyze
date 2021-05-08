@@ -1,6 +1,7 @@
 package de.neotop.textalyze;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -19,6 +20,7 @@ class TextalyzeApplicationTests {
     static final String simpleText = "​Word Word Words Wor word​ Wörd  W" + O_COMBINED_MARK + "rd";
     static final String punctationText = "​Word Word, Words. Wor (word​)? !!!! Wörd W" + O_COMBINED_MARK + "rd";
     private static final int totalCount = 7;
+    private static final int distinctWords = 5;
 
     @Test
     void contextLoads() {
@@ -48,12 +50,57 @@ class TextalyzeApplicationTests {
     }
 
     @Test
-    public void wordFrequencies() throws Exception {
+    public void distinctWords_simple() throws Exception {
         TextalyzeRecord record = controller.doAnalyzeText(simpleText);
-        assertThat(record.getId()).isNotBlank();
-        TextalyzeRecord record2 = controller.doGet(record.getId());
-        assertNotNull(record2);
-        assertEquals(record2.getId(), record.getId());
+        assertThat(record.distinctWords().size()).isEqualTo(distinctWords);
+    }
+
+     @Test
+     public void distinctWords_punctation() throws Exception {
+         TextalyzeRecord record2 = controller.doAnalyzeText(punctationText);
+         assertThat(record2.distinctWords().size()).isEqualTo(distinctWords);
+     }
+
+    @Test
+    public void wordFrequency_simple() throws Exception {
+        TextalyzeRecord record = controller.doAnalyzeText(simpleText);
+        assertEquals(2, record.getWordFrequency("Word"));
+        assertEquals(2, record.getWordFrequency("Wörd"));
+        assertEquals(1, record.getWordFrequency("Words"));
+    }
+
+    @Test
+    public void wordFrequency_punctation() throws Exception {
+        TextalyzeRecord record = controller.doAnalyzeText(punctationText);
+        assertEquals(2, record.getWordFrequency("Word"));
+        assertEquals(2, record.getWordFrequency("Wörd"));
+        assertEquals(1, record.getWordFrequency("Words"));
+    }
+
+    @Test
+    public void distances() throws Exception {
+        TextalyzeRecord record = controller.doAnalyzeText(punctationText);
+        assertEquals(0,record.getLevenshteinDistance("Word", "Word"));
+        assertEquals(1, record.getLevenshteinDistance("Wörd", "Word"));
+        assertEquals(1, record.getLevenshteinDistance("Words", "Word"));
+    }
+
+    @Test
+    public void wordFrequency_unknownWord() throws Exception {
+        TextalyzeRecord record = controller.doAnalyzeText(simpleText);
+        assertThatExceptionOfType(WordNotFoundException.class)
+            .isThrownBy(() -> {
+            assertEquals(2, record.getWordFrequency("unknown-Word"));
+        });
+    }
+
+    @Test
+    public void distances_unknownWor() throws Exception {
+        TextalyzeRecord record = controller.doAnalyzeText(punctationText);
+        assertThatExceptionOfType(WordNotFoundException.class)
+            .isThrownBy(() -> {
+               record.getLevenshteinDistance("unknown-Word", "Word");
+            });
     }
 
 }

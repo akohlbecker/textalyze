@@ -2,7 +2,10 @@ package de.neotop.textalyze;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.Normalizer;
+import java.util.List;
 
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.AttributeFactory;
@@ -25,9 +28,14 @@ public class TextAnalyzer {
 
     private TextalyzeRecord record;
 
-    public TextAnalyzer(TextalyzeRecord record, StringReader stringReader) throws IOException {
+    public TextAnalyzer(TextalyzeRecord record, String stringReader) throws IOException {
         this.record = record;
-        tozenizeAndCount(stringReader);
+        tozenizeAndCount(new StringReader(TextAnalyzer.normalizeText(stringReader)));
+    }
+
+    public static String normalizeText(String string) {
+        // TODO consider using the lucene normalizer ?
+       return Normalizer.normalize(string, Normalizer.Form.NFKD);
     }
 
     private void tozenizeAndCount(StringReader stringReader) throws IOException {
@@ -45,18 +53,29 @@ public class TextAnalyzer {
         while (tokenizer.incrementToken()) {
             String word = attr.toString();
             logger.debug(word);
-            if(!record.getWordFrequencies().containsKey(word)) {
-                record.getWordFrequencies().put(word, 1);
-            } else {
-                record.getWordFrequencies().put(word, record.getWordFrequencies().get(word) + 1);
-            }
+            record.putWord(word);
             wordCount++;
         }
         tokenizer.close();
         record.setWordCount(wordCount);
 
         logger.info("... analysis done");
+    }
 
+    /**
+     * calculates a matrix of levenshtein distances for each distinct word combination,
+     * and stored the result in {@link TextalyzeRecord#getDistances()}
+     */
+    public void calculateLevenstheinDistance() {
+        LevenshteinDistance ld =  new LevenshteinDistance();
+        List<String> words = record.distinctWords();
+        double [][] matrix = new double[words.size()][words.size()];
+        for(int i = 0 ; i < words.size(); i++) {
+            for(int j = 0; j < words.size(); j++) {
+                matrix[i][j] = ld.apply(words.get(i), words.get(j));
+            }
+        }
+        record.setDistances(matrix);
     }
 
     public TextalyzeRecord getRecord() {

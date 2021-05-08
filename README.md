@@ -6,6 +6,8 @@ The analysis results are cached internally for one hour. Once the maximum storag
 
 ## Analysis
 
+For the text analysis punctuation characters and diacritic characters are normalized. 
+
 * **word frequency**: The number of occurrences of a given word in the analyzed text. A frequency of 1 means that the word occurs one time-
 * **levenshtein distance**: The difference of two words calculated by the levenshtein algorithm.
 
