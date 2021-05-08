@@ -78,6 +78,4 @@ public class TextalyzeRecord implements Serializable {
         return id;
     }
 
-
-
 }
