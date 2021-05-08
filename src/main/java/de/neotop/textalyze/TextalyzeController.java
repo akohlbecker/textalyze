@@ -1,6 +1,7 @@
 package de.neotop.textalyze;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.ehcache.spi.loaderwriter.CacheLoadingException;
 import org.slf4j.Logger;
@@ -60,15 +61,13 @@ public class TextalyzeController {
     }
 
     @GetMapping(name="/{id}/{word}/similar")
-    public Long doSimilarWords(
+    public List<String> doSimilarWords(
             @PathVariable(name="id") String id,
             @PathVariable(name="word") String word,
             @RequestParam(name="threshold", defaultValue = "2.5") double threshold
-            ) throws IOException {
+            ) throws IOException, CacheLoadingException, WordNotFoundException {
 
-        // TODO find similar words
-
-        return 0l;
+        return cache.lookup(id).findSimilarWords(word, threshold);
     }
 
     @ExceptionHandler(IOException.class)

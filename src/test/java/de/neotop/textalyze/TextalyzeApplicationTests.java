@@ -122,6 +122,9 @@ class TextalyzeApplicationTests {
     public void workflow() throws Exception {
         String id = controller.doAnalyzeText(punctationText).getId();
         assertEquals(2, controller.doWordFrequency(id, "Wörd"));
+        List<String> similarWords = controller.doSimilarWords(id, "word", 1.0);
+        assertEquals(1, similarWords.size());
+        assertTrue(similarWords.contains("Word"));
     }
 
 
