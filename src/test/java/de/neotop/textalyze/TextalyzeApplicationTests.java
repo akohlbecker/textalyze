@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +105,17 @@ class TextalyzeApplicationTests {
             .isThrownBy(() -> {
                record.getLevenshteinDistance("unknown-Word", "Word");
             });
+    }
+
+    @Test
+    public void similarWords() throws Exception {
+        TextalyzeRecord record = controller.doAnalyzeText(punctationText);
+        List<String> similarWords = record.findSimilarWords("Word", 1.0);
+        assertEquals(4, similarWords.size());
+        assertTrue(similarWords.containsAll(Arrays.asList("Words", "Wor", "word", "Wörd")));
+        similarWords = record.findSimilarWords("word", 1.0);
+        assertEquals(1, similarWords.size());
+        assertTrue(similarWords.containsAll(Arrays.asList("Word")));
     }
 
     @Test

@@ -84,8 +84,8 @@ public class TextalyzeRecord implements Serializable {
      * analyzed text.
      * <p>
      * For getting the frequency for a specific word
-     * {@link {@link #getWordFrequency(String)} has to be used as this also applies the
-     * normalization.c
+     * {@link {@link #getWordFrequency(String)} has to be used as this also
+     * applies the normalization.c
      *
      *
      * @return an unmodifiable map of the word frequencies
@@ -96,7 +96,7 @@ public class TextalyzeRecord implements Serializable {
 
     public Integer getWordFrequency(String word) throws WordNotFoundException {
         String normalizedWord = TextAnalyzer.normalizeText(word);
-        if(wordFrequencies.containsKey(normalizedWord)) {
+        if (wordFrequencies.containsKey(normalizedWord)) {
             return wordFrequencies.get(normalizedWord);
         } else {
             throw new WordNotFoundException(word);
@@ -126,9 +126,9 @@ public class TextalyzeRecord implements Serializable {
     }
 
     /**
-     * Prior analysis, the text is usually cleaned from
-     * punctuation characters and is normalized (see {@link TextAnalyzer}),
-     * hence, the word count may be lower than in the original text.
+     * Prior analysis, the text is usually cleaned from punctuation characters
+     * and is normalized (see {@link TextAnalyzer}), hence, the word count may
+     * be lower than in the original text.
      *
      * @return the distinctWords as unmodifiable list
      */
@@ -137,22 +137,40 @@ public class TextalyzeRecord implements Serializable {
     }
 
     /**
-     * Provides the levenshtein distance for two given words from the internal matrix.
+     * Provides the levenshtein distance for two given words from the internal
+     * matrix.
      *
      * @throws WordNotFoundException
      */
     public double getLevenshteinDistance(String a, String b) throws WordNotFoundException {
         int indexA = distinctWords.indexOf(TextAnalyzer.normalizeText(a));
         int indexB = distinctWords.indexOf(TextAnalyzer.normalizeText(b));
-        if(indexA < 0) {
+        if (indexA < 0) {
             throw new WordNotFoundException(a);
         }
-        if(indexB < 0) {
+        if (indexB < 0) {
             throw new WordNotFoundException(b);
         }
         return distances[indexA][indexB];
     }
 
-
+    public List<String> findSimilarWords(String word, Double limit) throws WordNotFoundException {
+        String normalizedWord = TextAnalyzer.normalizeText(word);
+        List<String> words = distinctWords();
+        int wordIndex = words.indexOf(normalizedWord);
+        if (wordIndex < 0) {
+            throw new WordNotFoundException(word);
+        }
+        List<String> similarWords = new ArrayList<>();
+        logger.info("findSimilarWords ...");
+        for (int i = 0; i < words.size(); i++) {
+            logger.info(distances[i][wordIndex] + " <= " + limit + " for " + distinctWords.get(i));
+            if (distances[i][wordIndex] <= limit && distances[i][wordIndex] != 0.0) {
+                similarWords.add(distinctWords.get(i));
+            }
+        }
+        logger.info("... done");
+        return similarWords;
+    }
 
 }
