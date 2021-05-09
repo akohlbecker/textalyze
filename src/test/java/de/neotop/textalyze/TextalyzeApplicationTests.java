@@ -112,7 +112,8 @@ class TextalyzeApplicationTests {
         TextalyzeRecord record = controller.doAnalyzeText(punctationText);
         List<String> similarWords = record.findSimilarWords("Word", 1.0);
         assertEquals(4, similarWords.size());
-        assertTrue(similarWords.containsAll(Arrays.asList("Words", "Wor", "word", "Wörd")));
+        assertThat(similarWords.containsAll(Arrays.asList("Words", "Wor", "word", TextAnalyzer.normalizeText("Wörd"))))
+            .withFailMessage("unexpected similar words: " + String.join(", ", similarWords)).isTrue();
         similarWords = record.findSimilarWords("word", 1.0);
         assertEquals(1, similarWords.size());
         assertTrue(similarWords.containsAll(Arrays.asList("Word")));
