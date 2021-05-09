@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 
+import io.swagger.annotations.ApiOperation;
+
 
 @RestController
 @RequestMapping("/textalyze")
@@ -31,7 +33,10 @@ public class TextalyzeController {
     @Autowired
     private ITextalyzeCache cache;
 
-    @PostMapping("")
+    @PostMapping(path="", consumes={"text/plain", "application/json"}, produces = "application/json")
+    @ApiOperation(value = "Analyze and register the supplied text as a resource for subsequent requests.",
+        notes = "The id returned in the response object the identifier to be used with other service endpoints"
+    )
     public TextalyzeRecord doAnalyzeText(
             @RequestBody(required = true) String text
             ) throws IOException {
@@ -43,7 +48,8 @@ public class TextalyzeController {
         return analyzer.getRecord();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path="/{id}", produces = "application/json")
+    @ApiOperation(value = "Provides basic information on the specified resource.")
     public TextalyzeRecord doGet(
             @PathVariable(name="id") String id
             ) throws IOException {
@@ -51,7 +57,9 @@ public class TextalyzeController {
         return cache.lookup(id);
     }
 
-    @GetMapping("/{id}/{word}/frequency")
+    @GetMapping(path="/{id}/{word}/frequency", produces = "text/plain")
+    @ApiOperation(value = "Returns the frequency of word occurrence of the supplied word.",
+        notes = "A frequency of 3, means that the word occurs 3 times in the text.")
     public Integer doWordFrequency(
             @PathVariable(name="id") String id,
             @PathVariable(name="word") String word
@@ -60,7 +68,9 @@ public class TextalyzeController {
         return cache.lookup(id).getWordFrequency(word);
     }
 
-    @GetMapping(name="/{id}/{word}/similar")
+    @GetMapping(path="/{id}/{word}/similar", produces = "application/json")
+    @ApiOperation(value = "Lists similar words.",
+        notes = "Per default word with a Levenshtein distance of <= 2.5, are returned. This behavior can be adjusted by the threshold parameter.")
     public List<String> doSimilarWords(
             @PathVariable(name="id") String id,
             @PathVariable(name="word") String word,
@@ -80,7 +90,15 @@ public class TextalyzeController {
 
     @ExceptionHandler(WordNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleNoSuchElementFoundException(WordNotFoundException exception) {
+    public ResponseEntity<String> handleWordNotFoundException(WordNotFoundException exception) {
+      return ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(CacheLoadingException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleCacheLoadingException(CacheLoadingException exception) {
       return ResponseEntity
           .status(HttpStatus.NOT_FOUND)
           .body(exception.getMessage());

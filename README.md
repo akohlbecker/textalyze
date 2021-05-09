@@ -1,19 +1,23 @@
 # Textalyze
 
-A REST service for simple text analysis including word frequency and levenshtein distance measure. 
+A REST service for simple text analysis including word frequency and Levenshtein distance measure. 
 
 The analysis results are cached internally for one hour. Once the maximum storage time is exceeded old records will be evicted from the cache. 
 
 ## Analysis
 
-For the text analysis punctuation characters and diacritic characters are normalized. 
+Prior to the text analysis characters are normalized in accordance with the Unicode Standard Annex #15 (convert characters with diacritical marks, change all letters case, decompose ligatures, or convert half-width katakana characters to full-width). 
 
-* **word frequency**: The number of occurrences of a given word in the analyzed text. A frequency of 1 means that the word occurs one time-
-* **levenshtein distance**: The difference of two words calculated by the levenshtein algorithm.
+The tokenization process removed unwanted characters like punctuation and so on. The StandardTokenizer of the lucene framework is being used.
+
+The actual word analyses performed are:
+
+* **word frequency**: The number of occurrences of a given word in the analyzed text. A frequency of 1 means that the word occurs one time.
+* **Levenshtein distance**: The difference of two words calculated by the Levenshtein algorithm.
 
 ## REST services
 
-**TODO** full documentation either here or as swagger
+For documentation on the REST services please refer to the Swagger-UI, e.g.: [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/)
 
 ## Testing the rest service 
 
@@ -37,16 +41,34 @@ java -jar target/textalyze-0.0.1-SNAPSHOT.war
 
 (Below [httpie](https://httpie.io/) is being used)
 
-Post a test to run the analysis. The REST service responds with core information on the new created resource, including its **id**
+Post a text to run the analysis. The REST service responds with core information on the new created resource, including its **id**
 
 ~~~
- http POST :8080/textalyze body="Word Word word"  
+echo "Word wörd worrd Other Word" | http POST :8080/textalyze Content-Type:text/plain
 ~~~
 
-using the **id** from the above response the resource can be requested again. 
+By using the **id** from above response, the resource can be requested again. 
 This can be useful to test if the resource still exists in the cache. 
 
 ~~~
-http GET  :8080/textalyze/pgnLHE7  
+http GET :8080/textalyze/2cofSjg/ 
+~~~
+
+**frequency for given word**
+
+~~~
+http GET :8080/textalyze/2cofSjg/Word/frequency  
+~~~
+
+**similar words**
+
+~~~
+http GET :8080/textalyze/2cofSjg/Word/similar 
+~~~
+
+or with specification of a Levenshtine distance threshold
+
+~~~
+http GET :8080/textalyze/z-Pj5Sx/Word/similar threshold==1   
 ~~~
 

@@ -35,7 +35,7 @@ public class TextAnalyzer {
 
     public static String normalizeText(String string) {
         // TODO consider using the lucene normalizer ?
-       return Normalizer.normalize(string, Normalizer.Form.NFKD);
+       return Normalizer.normalize(string, Normalizer.Form.NFC);
     }
 
     private void tozenizeAndCount(StringReader stringReader) throws IOException {
