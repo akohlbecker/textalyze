@@ -72,3 +72,14 @@ or with specification of a Levenshtine distance threshold
 http GET :8080/textalyze/z-Pj5Sx/Word/similar threshold==1   
 ~~~
 
+## How to use
+
+Below a possible use of the textalyze REST service is illustrated:
+
+![](ui-suggestion.png)
+
+## TODO
+
+* activate file storage for cache, location configurable
+* cache expiration time configurable (minutes and hours)
+  
