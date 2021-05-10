@@ -17,7 +17,7 @@ The actual word analyses performed are:
 
 ## REST services
 
-For documentation on the REST services please refer to the Swagger-UI, e.g.: [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/)
+For documentation on the REST services please refer to the Swagger-UI, e.g.: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ## Testing the rest service 
 
