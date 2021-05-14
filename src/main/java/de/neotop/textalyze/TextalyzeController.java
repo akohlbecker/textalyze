@@ -60,12 +60,12 @@ public class TextalyzeController {
     @GetMapping(path="/{id}/{word}/frequency", produces = "text/plain")
     @ApiOperation(value = "Returns the frequency of word occurrence of the supplied word.",
         notes = "A frequency of 3, means that the word occurs 3 times in the text.")
-    public Integer doWordFrequency(
+    public String doWordFrequency(
             @PathVariable(name="id") String id,
             @PathVariable(name="word") String word
             ) throws IOException, CacheLoadingException, WordNotFoundException {
 
-        return cache.lookup(id).getWordFrequency(word);
+        return cache.lookup(id).getWordFrequency(word).toString();
     }
 
     @GetMapping(path="/{id}/{word}/similar", produces = "application/json")
