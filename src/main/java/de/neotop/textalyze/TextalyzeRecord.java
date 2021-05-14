@@ -1,5 +1,6 @@
 package de.neotop.textalyze;
 
+import java.beans.ConstructorProperties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +52,7 @@ public class TextalyzeRecord implements Serializable {
     private Map<String, Integer> wordFrequencies = new HashMap<>();
     private List<String> distinctWords = new ArrayList<>();
 
+    @ConstructorProperties({"id"})
     public TextalyzeRecord(String id) {
         this.id = id;
     }
